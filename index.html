@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon Sales Profit Calculator</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-white p-6 sm:p-10 rounded-3xl shadow-2xl w-full max-w-lg transform transition-transform duration-500 hover:scale-105">
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-center mb-4 text-gray-800">₹ Profit Pro</h1>
+        <p class="text-sm sm:text-base text-center text-gray-600 mb-8">Calculate your net profit in INR from total sales.</p>
+
+        <!-- Input Section -->
+        <div class="mb-6">
+            <label for="salesInput" class="block text-gray-700 font-semibold mb-2">Total Sales Amount (₹)</label>
+            <input type="number" id="salesInput" placeholder="e.g., 50000"
+                class="w-full px-5 py-3 border-2 border-gray-300 rounded-xl bg-gray-50 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all"
+                min="0">
+        </div>
+
+        <!-- Calculation Button -->
+        <button id="calculateBtn"
+            class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105 transition-all">
+            Calculate Profit
+        </button>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="mt-8 sm:mt-10 hidden">
+            <h2 class="text-xl sm:text-2xl font-bold mb-6 text-center text-gray-800">Detailed Breakdown</h2>
+
+            <div class="space-y-4">
+                <div class="flex justify-between items-center bg-gray-50 p-4 rounded-lg shadow-sm">
+                    <span class="font-medium text-gray-600">Total Sales:</span>
+                    <span id="displayTotalSales" class="font-extrabold text-lg sm:text-xl text-indigo-600">₹0.00</span>
+                </div>
+                <div class="flex justify-between items-center bg-gray-50 p-4 rounded-lg shadow-sm">
+                    <span class="font-medium text-gray-600">Amazon Fees (4%):</span>
+                    <span id="displayAmazonFees" class="font-bold text-base sm:text-lg text-red-500">-₹0.00</span>
+                </div>
+                <div class="flex justify-between items-center bg-gray-50 p-4 rounded-lg shadow-sm">
+                    <span class="font-medium text-gray-600">Shipping Cost (12%):</span>
+                    <span id="displayShippingCost" class="font-bold text-base sm:text-lg text-red-500">-₹0.00</span>
+                </div>
+                <div class="flex justify-between items-center bg-gray-50 p-4 rounded-lg shadow-sm">
+                    <span class="font-medium text-gray-600">Advertising Cost (5%):</span>
+                    <span id="displayAdsCost" class="font-bold text-base sm:text-lg text-red-500">-₹0.00</span>
+                </div>
+                <div class="flex justify-between items-center bg-gray-50 p-4 rounded-lg shadow-sm">
+                    <span class="font-medium text-gray-600">Miscellaneous Cost (5%):</span>
+                    <span id="displayMiscCost" class="font-bold text-base sm:text-lg text-red-500">-₹0.00</span>
+                </div>
+                <div class="flex justify-between items-center bg-indigo-50 p-6 rounded-lg border-2 border-indigo-400 transform transition-transform duration-300 hover:scale-105">
+                    <span class="text-lg sm:text-xl font-extrabold text-indigo-800">Final Profit:</span>
+                    <span id="displayFinalProfit" class="text-2xl sm:text-3xl font-extrabold text-indigo-700">₹0.00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for calculation logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get all the necessary DOM elements
+            const salesInput = document.getElementById('salesInput');
+            const calculateBtn = document.getElementById('calculateBtn');
+            const resultsSection = document.getElementById('resultsSection');
+            
+            // Display elements
+            const displayTotalSales = document.getElementById('displayTotalSales');
+            const displayAmazonFees = document.getElementById('displayAmazonFees');
+            const displayShippingCost = document.getElementById('displayShippingCost');
+            const displayAdsCost = document.getElementById('displayAdsCost');
+            const displayMiscCost = document.getElementById('displayMiscCost');
+            const displayFinalProfit = document.getElementById('displayFinalProfit');
+
+            // Function to perform the calculation and update the UI
+            const calculateProfit = () => {
+                const totalSales = parseFloat(salesInput.value);
+
+                // Input validation
+                if (isNaN(totalSales) || totalSales < 0) {
+                    // Using a custom message box instead of alert()
+                    const message = 'Please enter a valid positive number for total sales.';
+                    // This is a placeholder for a custom modal or message box implementation
+                    // In a real application, you would create a custom UI element here.
+                    console.log(message);
+                    return;
+                }
+
+                // Define the percentages for each cost
+                const amazonFeePercentage = 0.04; // 4%
+                const shippingCostPercentage = 0.12; // 12%
+                const adsCostPercentage = 0.05; // 5%
+                const miscCostPercentage = 0.05; // 5%
+
+                // Calculate each cost
+                const amazonFees = totalSales * amazonFeePercentage;
+                const shippingCost = totalSales * shippingCostPercentage;
+                const adsCost = totalSales * adsCostPercentage;
+                const miscCost = totalSales * miscCostPercentage;
+
+                // Calculate the final profit
+                const finalProfit = totalSales - amazonFees - shippingCost - adsCost - miscCost;
+
+                // Update the display with the calculated values
+                displayTotalSales.textContent = `₹${totalSales.toFixed(2)}`;
+                displayAmazonFees.textContent = `-₹${amazonFees.toFixed(2)}`;
+                displayShippingCost.textContent = `-₹${shippingCost.toFixed(2)}`;
+                displayAdsCost.textContent = `-₹${adsCost.toFixed(2)}`;
+                displayMiscCost.textContent = `-₹${miscCost.toFixed(2)}`;
+                displayFinalProfit.textContent = `₹${finalProfit.toFixed(2)}`;
+                
+                // Show the results section
+                resultsSection.classList.remove('hidden');
+            };
+
+            // Attach the click event listener to the button
+            calculateBtn.addEventListener('click', calculateProfit);
+        });
+    </script>
+</body>
+</html>
